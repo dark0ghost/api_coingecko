@@ -4,10 +4,13 @@ import aiohttp
 
 from typing import Dict
 
+from aiohttp_socks import SocksConnector
+
 
 class CryptoPrice:
     def __init__(self, session: aiohttp.ClientSession) -> None:
         """
+
         :param session:
         """
         self.api_link: str = "https://api.coingecko.com/api/v3/"
@@ -43,6 +46,7 @@ class CryptoPrice:
 
     async def exchanges(self) -> Dict[str, str]:
         """
+
         :return:
         """
         async with self.session.get(self.api_link + "exchanges") as response:
@@ -55,6 +59,7 @@ class CryptoPrice:
     async def fetch_global(self) -> Dict[str, str]:
         """
         Get cryptocurrency global data
+
         :return:
         """
         async with self.session.get(self.api_link + "global") as response:
@@ -63,6 +68,7 @@ class CryptoPrice:
     async def exchange_rates(self) -> Dict[str, str]:
         """
         Get BTC-to-Currency exchange rates
+
         :return:
         """
         async with self.session.get(self.api_link + "exchange_rates") as response:
@@ -70,6 +76,8 @@ class CryptoPrice:
 
     async def events_types(self) -> Dict[str, str]:
         """
+
+
         :return:
         """
         async with self.session.get(self.api_link + "events/types") as response:
@@ -77,6 +85,7 @@ class CryptoPrice:
 
     async def events_countries(self) -> Dict[str, str]:
         """
+
         :return:
         """
 
@@ -86,6 +95,7 @@ class CryptoPrice:
     async def events(self, country_code: str = '', Type: str = '', page: int = 100, upcoming_events_only: str = '',
                      rom_date: str = '', to_date: str = "") -> Dict[str, str]:
         """
+
         :param to_date:
         :param upcoming_events_only:
         :param Type:
@@ -163,10 +173,12 @@ class CryptoPrice:
                       order: str = "") -> Dict[str, str]:
         """
         Get coin tickers (paginated to 100 items)
+
         IMPORTANT:
         Ticker is_stale is true when ticker that has not been updated/unchanged from the exchange for a while.
         Ticker is_anomaly is true if ticker’s price is outliered by our system.
         You are responsible for managing how you want to display these information (e.g. footnote, different background, change opacity, hide)
+
         :param coin:
         :param exchange_ids:
         :param include_exchange_logo:
@@ -179,7 +191,8 @@ class CryptoPrice:
             return await response.json()
 
     async def current_data(self, coin: str, localization: str = '', tickers: bool = False, market_data: bool = False,
-                           community_data: bool = False, developer_data: bool = False, sparkline: bool = False) -> Dict[str, str]:
+                           community_data: bool = False, developer_data: bool = False, sparkline: bool = False) -> Dict[
+        str, str]:
         """
         Get current data (name, price, market, ... including exchange tickers) for a coin
         :param sparkline:
@@ -196,7 +209,8 @@ class CryptoPrice:
             return await response.json()
 
     async def coins_markets(self, vs_currency: str = "usd", order: str = "market_cap_desc", per_page: int = 100,
-                            page: int = 1, sparkline: bool = "false", price_change_percentage: str = "24h") -> Dict[str, str]:
+                            page: int = 1, sparkline: bool = "false", price_change_percentage: str = "24h") -> Dict[
+        str, str]:
         """
         Use this to obtain all the coins market data (price, market cap, volume)
         :param vs_currency:
@@ -249,3 +263,15 @@ class CryptoPrice:
                 self.api_link + "simple/supported_vs_currencies"
         ) as response:
             return await response.json()
+
+    async def open_session(self, proxy: str = None) -> aiohttp.ClientSession:
+        if proxy is None:
+            self.session = aiohttp.ClientSession()
+            return self.session
+        connector = SocksConnector.from_url(proxy)
+        self.session = aiohttp.ClientSession(connector=connector)
+        return self.session
+
+    async def close(self) -> None:
+        await self.session.close()
+        return
