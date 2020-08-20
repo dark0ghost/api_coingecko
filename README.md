@@ -3,7 +3,7 @@ __lib implementing__ [service](https://coingecko.com/)
 
 # dep
 **python>=3.7**
-**aiohttp>=3.6
+**aiohttp>=3.6**
 
 #how use
 ```python
