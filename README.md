@@ -5,7 +5,7 @@ __lib implementing__ [service](https://coingecko.com/)
 **python>=3.7**
 **aiohttp>=3.6**
 
-#how use
+# how use
 ```python
 from api_coingecko import CryptoPrice
 import aiohttp
